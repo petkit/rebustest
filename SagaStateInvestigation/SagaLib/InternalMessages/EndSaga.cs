@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TestMessages
+namespace SagaLib.InternalMessages
 {
-    public class TimeOutMessage
+    public class EndSaga
     {
-        public Guid Tag { get; set; }
+        public Guid Tag { set; get; }
     }
 }

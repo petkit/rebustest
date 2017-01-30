@@ -44,8 +44,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AlternativeSaga.cs" />
+    <Compile Include="RegularAsyncOperationsHandler.cs" />
+    <Compile Include="InternalMessages\EndSaga.cs" />
+    <Compile Include="InternalMessages\StartRegularAsyncOperations.cs" />
+    <Compile Include="InternalMessages\StartTimeoutOperations.cs" />
+    <Compile Include="InternalMessages\TimeOutMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestSaga.cs" />
+    <Compile Include="TimeoutAsyncOperationsHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

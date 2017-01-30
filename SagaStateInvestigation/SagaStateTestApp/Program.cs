@@ -1,9 +1,12 @@
-﻿using System;
+﻿#define USE_ORIGINAL
+
+using System;
 using Rebus.Activation;
 using Rebus.Bus;
 using Rebus.Config;
 using Rebus.Logging;
 using Rebus.Routing.TypeBased;
+using SagaLib;
 using TestMessages;
 
 
@@ -17,8 +20,14 @@ namespace SagaStateTestApp
             
             using (var adapter = new BuiltinHandlerActivator())
             {
-                adapter.Register(() => new TestSaga(_bus));
 
+#if USE_ORIGINAL
+                adapter.Register(() => new TestSaga(_bus));
+#else
+                adapter.Register(() => new AlternativeSaga(_bus));
+                adapter.Register(() => new RegularAsyncOperationsHandler(_bus));
+                adapter.Register(() => new TimeoutAsyncOperationsHandler(_bus));
+#endif
                 _bus = Configure.With(adapter)
                     .Logging(l => l.ColoredConsole(minLevel: LogLevel.Warn))
                     .Transport(t => t.UseRabbitMq("amqp://localhost", "testrmq"))

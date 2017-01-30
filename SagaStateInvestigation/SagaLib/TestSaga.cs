@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Rebus.Bus;
 using Rebus.Handlers;
 using Rebus.Sagas;
+using SagaLib.InternalMessages;
 using TestMessages;
 
 namespace SagaStateTestApp
@@ -15,6 +16,7 @@ namespace SagaStateTestApp
         public Guid OriginalMessageIdentifier { get; set; }
         public Guid CorrelationIdentifier { get; set; }
         public bool ReplyReceived { get; set; }
+        public bool TimeoutReceived { get; set; }
     }
 
     public class TestSaga : Saga<TestSagaData>, IAmInitiatedBy<SomeMessage>, IHandleMessages<SomeReply>, IHandleMessages<TimeOutMessage>

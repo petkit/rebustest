@@ -44,7 +44,6 @@
     <Compile Include="SomeMessage.cs" />
     <Compile Include="SomeReply.cs" />
     <Compile Include="SomeRequest.cs" />
-    <Compile Include="TimeOutMessage.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
