@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Rebus.Bus;
 using Rebus.Handlers;
 using Rebus.Sagas;
-using Rebus.Threading.SystemThreadingTimer;
 using TestMessages;
 
 namespace SagaStateTestApp
@@ -53,15 +49,21 @@ namespace SagaStateTestApp
         {
             // Even if we would get here loooong before...
             Data.ReplyReceived = true;
+            Console.WriteLine($"Saga for operation {message.Tag} got reply");
+            Console.WriteLine($"Operation {message.Tag} continuing regular operation...");
             await DoStuffIfNotTimedout();
         }
 
         public async Task Handle(TimeOutMessage message)
         {
+            Console.WriteLine($"Saga for operation {message.Tag} timed out!");
             // ...this, DoStuffIfTimeout below is always called
             // since state is preserved from the _bus.Defer call. Is this the expected behavior?
             if (!Data.ReplyReceived)
+            {
+                Console.WriteLine($"Operation {message.Tag} doing time out things!");
                 await DoStuffIfTimedout();
+            }            
         }
 
         private async Task DoStuffIfNotTimedout()
@@ -75,6 +77,9 @@ namespace SagaStateTestApp
         {
             // some more async stuff here
             await AsyncHandler2();
+
+            // This eventually seems to cause a concurrency exception since the saga has already been marken as complete above.
+            // In the original code the DoStuff-methods things occur in an external class and 
             MarkAsComplete();
         }
 

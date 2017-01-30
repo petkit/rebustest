@@ -32,7 +32,9 @@ namespace ExternalService
 
         static async Task HandleRequest(IBus bus, SomeRequest request)
         {
+            Console.WriteLine($"Request for operation {request.Tag} is being handled...");
             System.Threading.Thread.Sleep(2000);
+            Console.WriteLine($"Request for operation {request.Tag} was handled. Sending reply...");
             await bus.Reply(new SomeReply {Tag = request.Tag});
         }
     }
