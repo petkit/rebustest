@@ -23,6 +23,7 @@ namespace ExternalService
                 Configure.With(adapter)
                     .Logging(l => l.ColoredConsole(minLevel: LogLevel.Warn))
                     .Transport(t => t.UseRabbitMq("amqp://localhost", "externalservice.input"))
+                    .Options(o => o.SetMaxParallelism(10))
                     .Start();
 
                 Console.WriteLine("Press ENTER to quit");
@@ -33,7 +34,7 @@ namespace ExternalService
         static async Task HandleRequest(IBus bus, SomeRequest request)
         {
             Console.WriteLine($"Request for operation {request.Tag} is being handled...");
-            System.Threading.Thread.Sleep(2000);
+            await Task.Delay(200);
             Console.WriteLine($"Request for operation {request.Tag} was handled. Sending reply...");
             await bus.Reply(new SomeReply {Tag = request.Tag});
         }

@@ -25,8 +25,8 @@ namespace SagaLib
         }
 
         private async Task Asyncoperation()
-        {            
-            await Task.Run(() => System.Threading.Thread.Sleep(10000));
+        {
+            await Task.Delay(200);            
         }
     }
 }

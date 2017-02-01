@@ -1,6 +1,8 @@
-﻿#define USE_ORIGINAL
-
+﻿//#define USE_ORIGINAL
+//#define USE_SEPARATE_PRODUCER_QUEUES
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Rebus.Activation;
 using Rebus.Bus;
 using Rebus.Config;
@@ -30,11 +32,18 @@ namespace SagaStateTestApp
 #endif
                 _bus = Configure.With(adapter)
                     .Logging(l => l.ColoredConsole(minLevel: LogLevel.Warn))
-                    .Transport(t => t.UseRabbitMq("amqp://localhost", "testrmq"))
+#if USE_SEPARATE_PRODUCER_QUEUES
+                    .Transport(t => t.UseRabbitMq("amqp://localhost", Guid.NewGuid().ToString()))
+#else
+                    .Transport(t => t.UseRabbitMq("amqp://localhost", "oneandonlyproducerqueue"))
+#endif                
                     .Routing(r => r.TypeBased().MapAssemblyOf<SomeRequest>("externalservice.input"))
+                    .Options(o => o.SetMaxParallelism(5))
                     .Start();
 
-                Console.WriteLine("Press Q to quit or any other key to produce a job");
+                Timer timer = new Timer(SendRequest, null, 1000, 5000);
+
+                Console.WriteLine("Press Q to quit or any other key to produce an extra message");
 
                 while (true)
                 {
@@ -46,14 +55,22 @@ namespace SagaStateTestApp
                             goto quit;
 
                         default:
-                            adapter.Bus.SendLocal(new SomeMessage {Tag = Guid.NewGuid()}).Wait();
+                            _bus.SendLocal(new SomeMessage { Tag = Guid.NewGuid() }).Wait();
                             break;
                     }
                 }
 
                 quit:
                 Console.WriteLine("Quitting...");
+                timer.Dispose();
             }
+        }
+
+
+
+        static void SendRequest(object state)
+        {
+            _bus.SendLocal(new SomeMessage { Tag = Guid.NewGuid(), Identifier = Guid.NewGuid() }).Wait();
         }
     }
 }

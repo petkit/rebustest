@@ -39,7 +39,7 @@ namespace SagaLib
             Data.OriginalMessageIdentifier = message.Identifier;
             Data.ReplyReceived = false;
             await _bus.Send(new SomeRequest {Tag = message.Tag});
-            await _bus.Defer(TimeSpan.FromSeconds(5), new TimeOutMessage() {Tag = message.Tag});
+            await _bus.Defer(TimeSpan.FromSeconds(30), new TimeOutMessage() {Tag = message.Tag});
         }
 
         public async Task Handle(SomeReply message)
